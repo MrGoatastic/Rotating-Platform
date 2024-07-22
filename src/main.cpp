@@ -1,34 +1,45 @@
 #include <Arduino.h>
 #include <Stepper.h>
 
-// put function declarations here:
-int powerState = 0;
-int changePowerState = 0;
-const int powerPin = 2;
-const int stepPerRevolution = 2048;
+int powerState = 0;                   // ON OFF tracking
+int changePowerState = 0;             // Variable of the power button
+int rolePerMinute = 7;               // Adjustable range of 28BYJ-48 stepper is 0~17 rpm
+const int powerPin = 2;               // ON OFF Switch
+const int stepPerRevolution = 4096;
+
+Stepper myStepper = Stepper(stepPerRevolution, 8, 9, 10, 11);
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(powerPin, INPUT);
   Serial.begin(9600);
 } 
 
 void loop() {
-  // put your main code here, to run repeatedly:
   changePowerState = digitalRead(powerPin);
 
   if (changePowerState == HIGH) {
-    Serial.println(changePowerState);
-
+    Serial.println(changePowerState + powerState);
+    if (powerState = 0) {
+      motorStart();
+    }
+    else {
+      motorStop();
+    }
   }
   else {
-    Serial.println(changePowerState);
+    Serial.println(changePowerState + powerState);
   }
 
-  delay(1000);
+  delay(250);
 }
 
 // put function definitions here:
-int motorStart {
-  
+int motorStart() {
+  powerState = 1;
+  myStepper.setSpeed(rolePerMinute);
+}
+
+int motorStop() {
+  powerState = 0;
+  myStepper.setSpeed(0);
 }
